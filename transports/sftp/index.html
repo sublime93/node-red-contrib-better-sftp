@@ -1,0 +1,160 @@
+<script type="text/x-red" data-template-name="sftp">
+  <div class="form-row">
+    <label for="node-config-input-host"><i class="fa fa-bookmark"></i> Host</label>
+    <input type="text" id="node-config-input-host" placeholder="localhost" style="width: 40%;" />
+    <label for="node-config-input-port" style="margin-left: 10px; width: 35px; "> Port</label>
+    <input type="text" id="node-config-input-port" placeholder="22" style="width:45px">
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-ssh_dss"> Use ssh-dss</label>
+    <input type="checkbox" id="node-config-input-ssh_dss" style="width: 30px;">
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-username"><i class="fa fa-user"></i> Username</label>
+    <input type="text" id="node-config-input-username">
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-password"><i class="fa fa-key"></i> Password</label>
+    <input type="password" id="node-config-input-password">
+  </div>
+</script>
+
+<script type="text/javascript">
+    (function() {
+        RED.nodes.registerType('sftp', {
+            category: 'config',
+            defaults: {
+                host: { value: 'localhost', required: true },
+                port: { value: '22', required: true, validate: RED.validators.number() },
+                ssh_dss: { value: false, required: false }
+            },
+            credentials: {
+                username: { type: "text" },
+                password: { type: "password" }
+            },
+            exportable: false,
+            label: function() {
+                return this.host || ''
+            },
+            oneditsave: function() {
+                let trimFields = [
+                    "username",
+                    "password"
+                ];
+                // Just in case any whitespace has crept in with the copy-paste of the fields
+                trimFields.forEach(function(field) {
+                    var v = $("#node-config-input-"+field).val();
+                    v = v.trim();
+                    $("#node-config-input-"+field).val(v);
+                });
+            }
+        });
+    })();
+</script>
+
+<script type="text/x-red" data-template-name="sftp in">
+  <div class="form-row">
+      <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+      <input type="text" id="node-input-name" placeholder="Name">
+  </div>
+  <div class="form-row">
+    <label for="node-input-sftp"><i class="fa fa-user"></i> Add new FTP Server</label>
+    <input type="text" id="node-input-sftp">
+  </div>
+  <div class="form-row">
+    <label for="node-input-operation"><i class="fa fa-wrench"></i> Operation</label>
+    <select type="text" id="node-input-operation">
+      <option value="list">list</option>
+      <option value="get">get</option>
+      <option value="put">put</option>
+      <option value="delete">delete</option>
+      <option value="mkdir">mkdir</option>
+      <option value="rmdir">rmdir</option>
+    </select>
+  </div>
+  <div class="form-row input-workdir-row">
+    <label for="node-input-workdir"><i class="fa fa-folder-open"></i> Working Directory</label>
+    <input type="text" id="node-input-workdir" placeholder="Working Directory">
+  </div>
+  <div class="form-row input-filename-row hidden">
+    <label for="node-input-filename"><i class="fa fa-file"></i> Filename</label>
+    <input type="text" id="node-input-filename" placeholder="Filename">
+  </div>
+  <div class="form-row input-localFilename-row hidden">
+    <label for="node-input-localFilename"><i class="fa fa-file"></i> Local Filename</label>
+    <input type="text" id="node-input-localFilename" placeholder="Local Filename">
+  </div>
+  <div class="form-tips"><b>Tip:</b> This is here to help.</div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('sftp in', {
+        category: 'storage-input',
+        color:"#AAAA66",
+        defaults: {
+            name: { value: '' },
+            sftp: { type: 'sftp', required: true },
+            operation: { value: 'list', required: true },
+            filename: { value: '' },
+            localFilename: { value: '' },
+            workdir: { value: '' }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "file-in.png",
+        label: function () {
+            return this.name || 'sftp';
+        },
+        labelStyle: function () {
+            return this.name ? 'node_label_italic' : '';
+        },
+        oneditprepare: function () {
+            let filename = $(".input-filename-row");
+            let localFilename = $(".input-localFilename-row");
+            let workdir = $(".input-workdir-row");
+            $("#node-input-operation").change(function () {
+                let id = $("#node-input-operation option:selected").val();
+
+                switch (id) {
+                    case 'list':
+                        workdir.show();
+                        filename.hide();
+                        localFilename.hide();
+                        break;
+                    case 'get':
+                    case 'put':
+                        filename.show();
+                        workdir.show();
+                        localFilename.hide();
+                        break;
+                    case 'delete':
+                        filename.show();
+                        workdir.show();
+                        localFilename.hide();
+                        break;
+                    case 'mkdir':
+                    case 'rmdir':
+                        workdir.show();
+                        filename.hide();
+                        localFilename.hide();
+                        break;
+                    default:
+                        filename.show();
+                        localFilename.hide();
+                        break;
+                }
+            });
+        }
+    });
+</script>
+
+<script type="text/x-red" data-help-name="sftp in">
+   <p>SFTP incoming node. Used to read information from SFTP server</p>
+   <h3>Outputs</h3>
+       <dl class="message-properties">
+       <dt>payload
+           <span class="property-type">string | buffer</span>
+       </dt>
+   <h3>Details</h3>
+   <p>Some more information about the node.</p>
+</script>
