@@ -89,11 +89,6 @@ module.exports = function (RED) {
                 };
 
                 return new Promise(async function(resolve,reject) {
-                    if (node.running) {
-                        node.error('Node is already running');
-                        return reject('Node is already running');
-                    }
-                    node.running = true;
                     try {
                         // Connect to sftp server
                         await sftp.connect(conSettings);
@@ -157,7 +152,6 @@ module.exports = function (RED) {
                     } finally {
                         sftp.client.end();
                         sftp.end();
-                        node.running = false;
                         node.status({});
                     }
                 });
