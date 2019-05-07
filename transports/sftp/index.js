@@ -108,7 +108,7 @@ module.exports = function (RED) {
                                 break;
                             case 'get':
                                 let getFtpFileName = path.join(node.workdir, node.filename);
-                                if (msg.payload.filename) getFtpFileName = msg.payload.filename;
+                                if (msg.payload) getFtpFileName = msg.payload;
 
                                 let fileBytes = await sftp.get(getFtpFileName);
                                 msg.payload = fileBytes;
@@ -116,27 +116,29 @@ module.exports = function (RED) {
                                 break;
                             case 'put':
                                 let putFtpFileName = path.join(node.workdir, node.filename);
-                                if (msg.payload.filename) putFtpFileName = msg.payload.filename;
+                                if (msg.payload.filename) putFtpFileName = path.join(node.workdir, msg.payload.filename);
 
-                                let put = await sftp.put(msg.payload, putFtpFileName);
+                                let put = await sftp.put(msg.payload.data, putFtpFileName);
 
                                 msg.payload = put;
                                 node.send(msg);
                                 break;
                             case 'delete':
                                 let delFtpFileName = path.join(node.workdir, node.filename);
-                                if (msg.payload.filename) delFtpFileName = msg.payload.filename;
+                                if (msg.payload) delFtpFileName = msg.payload;
                                 let del = await sftp.delete(delFtpFileName);
                                 msg.payload = del;
                                 node.send(msg);
                                 break;
                             case 'mkdir':
-                                let mkdir = await sftp.mkdir(node.workdir, false);
+                                let mkDirName = (msg.payload) ? msg.payload : node.workdir;
+                                let mkdir = await sftp.mkdir(mkDirName, false);
                                 msg.payload = mkdir;
                                 node.send(msg);
                                 break;
                             case 'rmdir':
-                                let rmdir = await sftp.rmdir(node.workdir, false);
+                                let rmDirName = (msg.payload) ? msg.payload : node.workdir;
+                                let rmdir = await sftp.rmdir(rmDirName, false);
                                 msg.payload = rmdir;
                                 node.send(msg);
                                 break;

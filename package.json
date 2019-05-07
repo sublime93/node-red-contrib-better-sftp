@@ -1,14 +1,14 @@
 {
-  "name": "red-contrib-file-buddy",
+  "name": "red-contrib-better-sftp",
   "version": "0.0.1",
-  "description": "A node-red node that supports multiple types of file transfer protocols.",
+  "description": "A node-red for SFTP communication.",
   "main": "transports/sftp/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rocky3598/node-red-contrib-file-buddy.git"
+    "url": "git+https://github.com/rocky3598/node-red-contrib-better-sftp.git"
   },
   "keywords": [
     "sftp",
@@ -23,9 +23,9 @@
   "author": "Jordan Vohwinkel <jvohwinkel@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/rocky3598/node-red-contrib-file-buddy/issues"
+    "url": "https://github.com/rocky3598/node-red-contrib-better-sftp/issues"
   },
-  "homepage": "https://github.com/rocky3598/node-red-contrib-file-buddy#readme",
+  "homepage": "https://github.com/rocky3598/node-red-contrib-better-sftp#readme",
   "dependencies": {
     "ssh2-sftp-client": "^2.5.0"
   }
