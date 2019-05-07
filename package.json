@@ -1,6 +1,6 @@
 {
   "name": "red-contrib-better-sftp",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A better node for SFTP communication.",
   "main": "transports/sftp/index.js",
   "scripts": {
