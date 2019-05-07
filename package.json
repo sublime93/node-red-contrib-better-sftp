@@ -1,7 +1,7 @@
 {
   "name": "red-contrib-better-sftp",
   "version": "0.0.2",
-  "description": "A node-red for SFTP communication.",
+  "description": "A better node for SFTP communication.",
   "main": "transports/sftp/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,6 +11,7 @@
     "url": "git+https://github.com/rocky3598/node-red-contrib-better-sftp.git"
   },
   "keywords": [
+    "node-red",
     "sftp",
     "file",
     "redconnect"
