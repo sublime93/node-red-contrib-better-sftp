@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 const Client = require('ssh2-sftp-client');
-const stream = require('stream');
 
 module.exports = function (RED) {
     'use strict';
@@ -10,39 +9,18 @@ module.exports = function (RED) {
 
     function SFtpNode(n) {
         RED.nodes.createNode(this, n);
-        let node = this;
 
-        let keyFile = null;
-        let keyData = null;
-        if (process.env.SFTP_SSH_KEY_FILE){
-            keyFile = process.env.SFTP_SSH_KEY_FILE;
-            keyFile = path.resolve(__dirname,'../../' + keyFile);
-            console.log("SFTP_SSH_KEY_FILE: " + keyFile);
+        // TODO: Private key: https://github.com/mscdex/ssh2#user-content-client-methods
 
-            try{
-                keyData = fs.readFileSync(keyFile).toString();
-            } catch (e){
-                keyData = null;
-                console.log("SFTP - Read Key File [" + keyFile + "] Exception : " + e);
-            }
-        }
-
-        if (keyFile && keyData) {
-            console.log("SFTP - Using privateKey: " + keyFile + " Length: " + keyData.toString().length);
-            this.options = {
-                host: n.host || 'localhost',
-                port: n.port || 22,
-                privateKey: keyData,
-                ssh_dss: n.ssh_dss
-            };
-        } else {
-            console.log("SFTP - Using User/Pwd");
-            this.options = {
-                host: n.host || 'localhost',
-                port: n.port || 22,
-                ssh_dss: n.ssh_dss
-            };
-        }
+        this.options = {
+            host: n.host || 'localhost',
+            port: n.port || 22,
+            algorithms_kex: n.algorithms_kex,
+            algorithms_cipher: n.algorithms_cipher,
+            algorithms_serverHostKey: n.algorithms_serverHostKey,
+            algorithms_hmac: n.algorithms_hmac,
+            algorithms_compress: n.algorithms_compress
+        };
     }
 
     RED.nodes.registerType('sftp', SFtpNode, {
@@ -89,9 +67,13 @@ module.exports = function (RED) {
                 /*SFTP options*/
                 node.sftpConfig.options.host = msg.host || node.sftpConfig.options.host ;
                 node.sftpConfig.options.port = msg.port || node.sftpConfig.options.port ;
-                node.sftpConfig.options.username = msg.user || node.sftpConfig.credentials.username || "";
-                node.sftpConfig.options.password = msg.password || node.sftpConfig.credentials.password || "";
-                node.sftpConfig.options.ssh_dss = msg.ssh_dss || node.sftpConfig.options.ssh_dss || { };
+                node.sftpConfig.options.username = msg.user || node.sftpConfig.credentials.username || '';
+                node.sftpConfig.options.password = msg.password || node.sftpConfig.credentials.password || '';
+                node.sftpConfig.options.algorithms_kex = node.sftpConfig.options.algorithms_kex || 'ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha1';
+                node.sftpConfig.options.algorithms_cipher = node.sftpConfig.options.algorithms_cipher || 'aes128-ctr,aes192-ctr,aes256-ctr,aes128-gcm,aes128-gcm@openssh.com,aes256-gcm,aes256-gcm@openssh.com';
+                node.sftpConfig.options.algorithms_serverHostKey = node.sftpConfig.options.algorithms_serverHostKey || 'ssh-rsa,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521';
+                node.sftpConfig.options.algorithms_hmac = node.sftpConfig.options.algorithms_hmac || 'hmac-sha2-256,hmac-sha2-512,hmac-sha1';
+                node.sftpConfig.options.algorithms_compress = node.sftpConfig.options.algorithms_compress || 'none,zlib@openssh.com,zlib';
 
                 let conSettings = {
                     host: node.sftpConfig.options.host,
@@ -99,11 +81,13 @@ module.exports = function (RED) {
                     username: node.sftpConfig.options.username,
                     password: node.sftpConfig.options.password,
                 };
-                if (node.sftpConfig.options.ssh_dss) {
-                    conSettings.algorithms = {
-                        serverHostKey: ['ssh-dss']
-                    }
-                }
+                conSettings.algorithms = {
+                    kex: node.sftpConfig.options.algorithms_kex.split(','),
+                    cipher: node.sftpConfig.options.algorithms_cipher.split(','),
+                    serverHostKey: node.sftpConfig.options.algorithms_serverHostKey.split(','),
+                    hmac: node.sftpConfig.options.algorithms_hmac.split(','),
+                    compress: node.sftpConfig.options.algorithms_compress.split(',')
+                };
 
                 return new Promise(async function(resolve,reject) {
                     if (node.running) {
