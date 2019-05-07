@@ -5,8 +5,6 @@ const Client = require('ssh2-sftp-client');
 module.exports = function (RED) {
     'use strict';
 
-    let sftp = new Client();
-
     function SFtpNode(n) {
         RED.nodes.createNode(this, n);
 
@@ -59,6 +57,7 @@ module.exports = function (RED) {
 
         let node = this;
         node.on('input', function (msg) {
+            let sftp = new Client();
             node.status({ fill:"blue",shape:"dot",text: 'connecting' });
             try {
                 node.workdir = node.workdir || msg.workdir || "./";
@@ -156,6 +155,7 @@ module.exports = function (RED) {
                         node.error(err ? err.toString() : 'Unknown error' );
                         reject(err);
                     } finally {
+                        sftp.client.end();
                         sftp.end();
                         node.running = false;
                         node.status({});
