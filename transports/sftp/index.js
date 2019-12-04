@@ -7,12 +7,33 @@ module.exports = function (RED) {
 
     function SFtpNode(n) {
         RED.nodes.createNode(this, n);
+        this.valid = true;
+        var keyPath = n.key.trim();
 
-        // TODO: Private key: https://github.com/mscdex/ssh2#user-content-client-methods
+        if (keyPath.length > 0) {
+            try {
+                if (keyPath) {
+                    this.key = fs.readFileSync(keyPath);
+                }
+            } catch (err) {
+                this.valid = false;
+                this.error(err.toString());
+                return;
+            }
+        } else {
+            if (this.credentials) {
+                var keyData = this.credentials.keydata || "";
+
+                if (keyData) {
+                    this.key = keyData;
+                }
+            }
+        }
 
         this.options = {
             host: n.host || 'localhost',
             port: n.port || 22,
+            tryKeyboard: n.tryKeyboard || false,
             algorithms_kex: n.algorithms_kex,
             algorithms_cipher: n.algorithms_cipher,
             algorithms_serverHostKey: n.algorithms_serverHostKey,
@@ -24,8 +45,10 @@ module.exports = function (RED) {
     RED.nodes.registerType('sftp', SFtpNode, {
         credentials: {
             username: { type: "text" },
-            password: { type: "password" }
-        }
+            password: { type: "password" },
+            keydata: { type: "text" },
+            passphrase: { type: "password" }
+        },
     });
 
     function SFtpInNode(n) {
@@ -44,30 +67,27 @@ module.exports = function (RED) {
         }
 
         // Validate credentials are present.
-        if (!this.sftpConfig.credentials.username || !this.sftpConfig.credentials.password ||
-            this.sftpConfig.credentials.username === '' || this.sftpConfig.credentials.password === '') {
-            this.error('Invalid SFTP credentials. Make sure username and password are defined in server configuration.');
-            return;
-        }
-
-        if (!this.sftpConfig) {
-            this.error('missing sftp configuration');
+        if (!this.sftpConfig.credentials.username || this.sftpConfig.credentials.username === '') {
+            this.error('Username not present. Make sure username is defined in server configuration.');
             return;
         }
 
         let node = this;
         node.on('input', function (msg) {
             let sftp = new Client();
-            node.status({ fill:"blue",shape:"dot",text: 'connecting' });
+            node.status({ fill: "blue", shape: "dot", text: 'connecting' });
             try {
                 node.workdir = node.workdir || msg.workdir || "./";
                 node.localFilename = node.localFilename || msg.localFilename || "";
 
-                /*SFTP options*/
-                node.sftpConfig.options.host = msg.host || node.sftpConfig.options.host ;
-                node.sftpConfig.options.port = msg.port || node.sftpConfig.options.port ;
+                /* SFTP options */
+                node.sftpConfig.options.host = msg.host || node.sftpConfig.options.host;
+                node.sftpConfig.options.port = msg.port || node.sftpConfig.options.port;
                 node.sftpConfig.options.username = msg.user || node.sftpConfig.credentials.username || '';
                 node.sftpConfig.options.password = msg.password || node.sftpConfig.credentials.password || '';
+                node.sftpConfig.options.tryKeyboard = node.sftpConfig.options.tryKeyboard || false;
+                node.sftpConfig.options.keydata = node.sftpConfig.key || '';
+                node.sftpConfig.options.passphrase = node.sftpConfig.credentials.passphrase || '';
                 node.sftpConfig.options.algorithms_kex = node.sftpConfig.options.algorithms_kex || 'ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha1';
                 node.sftpConfig.options.algorithms_cipher = node.sftpConfig.options.algorithms_cipher || 'aes128-ctr,aes192-ctr,aes256-ctr,aes128-gcm,aes128-gcm@openssh.com,aes256-gcm,aes256-gcm@openssh.com';
                 node.sftpConfig.options.algorithms_serverHostKey = node.sftpConfig.options.algorithms_serverHostKey || 'ssh-rsa,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521';
@@ -79,7 +99,11 @@ module.exports = function (RED) {
                     port: node.sftpConfig.options.port,
                     username: node.sftpConfig.options.username,
                     password: node.sftpConfig.options.password,
+                    privateKey: node.sftpConfig.options.keydata,
+                    passphrase: node.sftpConfig.options.passphrase,
+                    tryKeyboard: node.sftpConfig.options.tryKeyboard,
                 };
+
                 conSettings.algorithms = {
                     kex: node.sftpConfig.options.algorithms_kex.split(','),
                     cipher: node.sftpConfig.options.algorithms_cipher.split(','),
@@ -88,7 +112,7 @@ module.exports = function (RED) {
                     compress: node.sftpConfig.options.algorithms_compress.split(',')
                 };
 
-                return new Promise(async function(resolve,reject) {
+                return new Promise(async function (resolve, reject) {
                     try {
                         // Connect to sftp server
                         await sftp.connect(conSettings);
@@ -147,7 +171,7 @@ module.exports = function (RED) {
                         resolve('success');
                     } catch (err) {
                         node.status({ fill: 'red', shape: 'ring', text: 'failed' });
-                        node.error(err ? err.toString() : 'Unknown error' );
+                        node.error(err ? err.toString() : 'Unknown error');
                         reject(err);
                     } finally {
                         sftp.client.end();
