@@ -41,7 +41,8 @@ Algorithms are set to pre-defined default values. If you need to modify them see
 License
 -------
 
-See [license](https://github.com/rocky3598/node-red-contrib-better-sftp/blob/master/LICENSE)
+See [license](https://github.com/sublime93/node-red-contrib-better-sftp/blob/master/LICENSE)
+
 
 [https://github.com/mscdex/ssh2-streams]: https://github.com/mscdex/ssh2-streams
 [https://github.com/jyu213]: https://github.com/jyu213
