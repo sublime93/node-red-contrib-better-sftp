@@ -73,7 +73,18 @@ module.exports = function (RED) {
         }
 
         let node = this;
-        node.on('input', function (msg) {
+        node.on('input', function (msg, send, done) {
+
+            function handleError(error, msg) {
+                if (done) {
+                    // Node-RED 1.0 compatible
+                    done(error);
+                } else {
+                    // Node-RED 0.x compatible
+                    node.error(error, msg);
+                }
+            }
+
             let sftp = new Client();
             node.status({ fill: "blue", shape: "dot", text: 'connecting' });
             try {
@@ -171,7 +182,7 @@ module.exports = function (RED) {
                         resolve('success');
                     } catch (err) {
                         node.status({ fill: 'red', shape: 'ring', text: 'failed' });
-                        node.error(err ? err.toString() : 'Unknown error');
+                        handleError(err, msg);
                         reject(err);
                     } finally {
                         sftp.client.end();
@@ -180,7 +191,7 @@ module.exports = function (RED) {
                     }
                 });
             } catch (error) {
-                node.error(error);
+                handleError(error, msg);
             }
         });
     }

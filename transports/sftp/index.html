@@ -1,15 +1,15 @@
 <script type="text/x-red" data-template-name="sftp in">
   <div class="form-row">
-      <label for="node-input-name"><i class="icon-tag"></i> Name</label>
-      <input type="text" id="node-input-name" placeholder="Name">
+      <label for="node-input-name" style="width: 120px;"  ><i class="icon-tag"></i> Name</label>
+      <input type="text" id="node-input-name" style="width: calc(100% - 170px);"  placeholder="Name">
   </div>
   <div class="form-row">
-    <label for="node-input-sftp"><i class="fa fa-user"></i> Add new FTP Server</label>
-    <input type="text" id="node-input-sftp">
+    <label for="node-input-sftp" style="width: 120px;"  ><i class="fa fa-server"></i> SFTP Server</label>
+    <input type="text" id="node-input-sftp" >
   </div>
   <div class="form-row">
-    <label for="node-input-operation"><i class="fa fa-wrench"></i> Operation</label>
-    <select type="text" id="node-input-operation">
+    <label for="node-input-operation"  style="width: 120px;" ><i class="fa fa-wrench"></i> Operation</label>
+    <select type="text" id="node-input-operation" style="width: calc(100% - 170px);"  >
       <option value="list">List Directory</option>
       <option value="get">Get</option>
       <option value="put">Put</option>
@@ -19,16 +19,16 @@
     </select>
   </div>
   <div class="form-row input-workdir-row">
-    <label for="node-input-workdir"><i class="fa fa-folder-open"></i> Working Directory</label>
-    <input type="text" id="node-input-workdir" placeholder="Working Directory">
+    <label for="node-input-workdir" style="width: 120px;"  ><i class="fa fa-folder-open"></i> Working Directory</label>
+    <input type="text" id="node-input-workdir" style="width: calc(100% - 170px);"  placeholder="Working Directory">
   </div>
   <div class="form-row input-filename-row hidden">
-    <label for="node-input-filename"><i class="fa fa-file"></i> Filename</label>
-    <input type="text" id="node-input-filename" placeholder="Filename">
+    <label for="node-input-filename" style="width: 120px;"  ><i class="fa fa-file"></i> Filename</label>
+    <input type="text" id="node-input-filename" style="width: calc(100% - 170px);" placeholder="Filename">
   </div>
   <div class="form-row input-localFilename-row hidden">
-    <label for="node-input-localFilename"><i class="fa fa-file"></i> Local Filename</label>
-    <input type="text" id="node-input-localFilename" placeholder="Local Filename">
+    <label for="node-input-localFilename" style="width: 120px;"  ><i class="fa fa-file"></i> Local Filename</label>
+    <input type="text" id="node-input-localFilename" style="width: calc(100% - 170px);" placeholder="Local Filename">
   </div>
 <!--  <div class="form-tips"><b>Tip:</b> This is here to help.</div>-->
 </script>
@@ -112,37 +112,32 @@
 
 <script type="text/x-red" data-template-name="sftp">
   <div class="form-row">
-    <label for="node-config-input-host"><i class="fa fa-bookmark"></i> Host</label>
-    <input type="text" id="node-config-input-host" placeholder="localhost" style="width: 40%;" />
-    <label for="node-config-input-port" style="margin-left: 10px; width: 35px; "> Port</label>
-    <input type="text" id="node-config-input-port" placeholder="22" style="width:45px">
+    <label for="node-config-input-host" style="width: 120px;" ><i class="fa fa-bookmark"></i> Host</label>
+    <input type="text" id="node-config-input-host" placeholder="localhost" style="width: calc(100% - 310px);" />
+    <label for="node-config-input-port" style="margin-left: 10px; width: 45px; "> Port</label>
+    <input type="text" id="node-config-input-port" placeholder="22" style="width:75px">
   </div>
   <div class="form-row">
-    <label for="node-config-input-username"><i class="fa fa-user"></i> Username</label>
-    <input type="text" id="node-config-input-username">
+    <label for="node-config-input-username" style="width: 120px;" ><i class="fa fa-user"></i> Username</label>
+    <input type="text" style="width: calc(100% - 170px);" id="node-config-input-username">
   </div>
-  <div class="form-row" id="node-config-row-usepassword">
-    <input type="checkbox" id="node-config-input-usepassword" style="display: inline-block; width: auto; vertical-align: top;">
-    <label for="node-config-input-usepassword" style="width: 70%;"> Use password</label>
+  <div class="form-row" id="node-config-row-password" >
+    <label for="node-config-input-password" style="width: 120px;" ><i class="fa fa-key"></i> Password</label>
+    <input type="password" style="width: calc(100% - 170px);" id="node-config-input-password">
   </div>
-  <div class="form-row hide" id="node-config-row-password" >
-    <label for="node-config-input-password"><i class="fa fa-key"></i> Password</label>
-    <input type="password" id="node-config-input-password">
+  <div class="form-row" id="node-config-row-tryKeyboard">
+    <input type="checkbox" id="node-config-input-tryKeyboard" style="display: inline-block; width: auto; vertical-align: top; margin-left: 20px;">
+    <label for="node-config-input-tryKeyboard" > Try keyboard</label>
   </div>
-  <div class="form-row hide" id="node-config-row-tryKeyboard">
-    <input type="checkbox" id="node-config-input-tryKeyboard" style="display: inline-block; width: auto; vertical-align: top;">
-    <label for="node-config-input-tryKeyboard" style="width: 70%;"> Try keyboard</label>
+  <div class="form-row">
+    <label><i class="fa fa-file-text-o"></i> Private key</label>
   </div>
-  <div class="form-row" id="node-config-row-usekey">
-    <input type="checkbox" id="node-config-input-usekey" style="display: inline-block; width: auto; vertical-align: top;">
-    <label for="node-config-input-usekey" style="width: 70%;"> Use private key</label>
+  <div class="form-row" id="node-config-row-uselocalfiles">
+    <input type="checkbox" id="node-config-input-uselocalfiles" style="display: inline-block; width: auto; vertical-align: top;margin-left: 20px;">
+    <label for="node-config-input-uselocalfiles" > Use local files</label>
   </div>
-  <div class="form-row hide" id="node-config-row-uselocalfiles">
-    <input type="checkbox" id="node-config-input-uselocalfiles" style="display: inline-block; width: auto; vertical-align: top;">
-    <label for="node-config-input-uselocalfiles" style="width: 70%;"> Use local files</label>
-  </div>
-  <div class="form-row hide" id="node-config-row-key" >
-      <label style="width: 120px;"><i class="fa fa-file-text-o"></i> Private key</label>
+  <div class="form-row" id="node-config-row-key" >
+      <label style="width: 100px; margin-left: 20px;" ><i class="fa fa-file-text-o"></i> File</label>
       <span class="sftp-config-input-data">
           <label class="red-ui-button" for="node-config-input-keyfile"><i class="fa fa-upload"></i> Upload</label>
           <input class="hide" type="file" id="node-config-input-keyfile">
@@ -153,32 +148,32 @@
       <input type="hidden" id="node-config-input-keydata">
       <input class="hide sftp-config-input-path" style="width: calc(100% - 170px);" type="text" id="node-config-input-key" >
   </div>
-  <div class="form-row hide" id="node-config-row-passphrase">
-    <label style="width: 100px; margin-left: 20px;" for="node-config-input-passphrase"><i class="fa fa-key"></i> Key passphrase</label>
+  <div class="form-row" id="node-config-row-passphrase">
+    <label style="width: 100px; margin-left: 20px;" for="node-config-input-passphrase"><i class="fa fa-key"></i> Passphrase</label>
     <input type="password" style="width: calc(100% - 170px);" id="node-config-input-passphrase" >
   </div>
   <div class="form-row">
     <label><i class="fa fa-lock"></i> Algorithms</label>
   </div>
   <div class="form-row">
-    <label for="node-config-input-algorithms_kex"> Kex</label>
-    <input type="text" id="node-config-input-algorithms_kex">
+    <label for="node-config-input-algorithms_kex" style="width: 100px; margin-left: 20px;" > Kex</label>
+    <input type="text" id="node-config-input-algorithms_kex" style="width: calc(100% - 170px);" >
   </div>
   <div class="form-row">
-    <label for="node-config-input-algorithms_cipher"> Cipher</label>
-    <input type="text" id="node-config-input-algorithms_cipher">
+    <label for="node-config-input-algorithms_cipher" style="width: 100px; margin-left: 20px;" > Cipher</label>
+    <input type="text" id="node-config-input-algorithms_cipher" style="width: calc(100% - 170px);" >
   </div>
   <div class="form-row">
-    <label for="node-config-input-algorithms_serverHostKey"> ServerHostKey</label>
-    <input type="text" id="node-config-input-algorithms_serverHostKey">
+    <label for="node-config-input-algorithms_serverHostKey" style="width: 100px; margin-left: 20px;" > ServerHostKey</label>
+    <input type="text" id="node-config-input-algorithms_serverHostKey" style="width: calc(100% - 170px);" >
   </div>
   <div class="form-row">
-    <label for="node-config-input-algorithms_hmac"> HMAC</label>
-    <input type="text" id="node-config-input-algorithms_hmac">
+    <label for="node-config-input-algorithms_hmac" style="width: 100px; margin-left: 20px;" > HMAC</label>
+    <input type="text" id="node-config-input-algorithms_hmac" style="width: calc(100% - 170px);" >
   </div>
   <div class="form-row">
-    <label for="node-config-input-algorithms_compress"> Compress</label>
-    <input type="text" id="node-config-input-algorithms_compress">
+    <label for="node-config-input-algorithms_compress" style="width: 100px; margin-left: 20px;" > Compress</label>
+    <input type="text" id="node-config-input-algorithms_compress" style="width: calc(100% - 170px);" >
   </div>
 </script>
 
@@ -212,35 +207,6 @@
         return this.host ? "node_label_italic" : "";
       },
       oneditprepare: function () {
-        function updateUsePassword() {
-          if ($("#node-config-input-usepassword").is(':checked')) {
-            $("#node-config-row-password").show();
-            $("#node-config-row-tryKeyboard").show();
-          } else {
-            $("#node-config-row-password").hide();
-            $("#node-config-row-tryKeyboard").hide();
-          }
-        }
-        $("#node-config-input-usepassword").on("click", function () {
-          updateUsePassword();
-        });
-
-        function updateUseKey() {
-          if ($("#node-config-input-usekey").is(':checked')) {
-            $("#node-config-row-uselocalfiles").show();
-            $("#node-config-row-key").show();
-            $("#node-config-row-passphrase").show();
-          } else {
-            $("#node-config-row-uselocalfiles").hide();
-            $("#node-config-row-key").hide();
-            $("#node-config-row-passphrase").hide();
-          }
-        }
-
-        $("#node-config-input-usekey").on("click", function () {
-          updateUseKey();
-        });
-
         function updateFileUpload() {
           if ($("#node-config-input-uselocalfiles").is(':checked')) {
             $(".sftp-config-input-path").show();
@@ -281,7 +247,7 @@
 
         // in case paths were set from old SFTP config
         if(this.key || this.keyname) {
-          $("#node-config-input-usekey").prop('checked', true);
+          // $("#node-config-input-usekey").prop('checked', true);
           if(this.key){
             $("#node-config-input-uselocalfiles").prop('checked', true);
           } else {
@@ -289,9 +255,11 @@
           }
         }
 
+        if(this.password){
+          $("#node-config-input-usepassword").prop('checked', true);
+        }
+
         updateFileUpload();
-        updateUseKey();
-        updateUsePassword();
       },
       oneditsave: function () {
         function clearNameData(prop) {
