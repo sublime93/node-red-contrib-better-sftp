@@ -125,6 +125,13 @@ module.exports = function (RED) {
 
                 return new Promise(async function (resolve, reject) {
                     try {
+                        // Try password interative
+                        if(conSettings.tryKeyboard === true) {
+                            sftp.on('keyboard-interactive', function(name, instructions, instructionsLang, prompts, finish) {
+                                finish([conSettings.password]);
+                            })
+                        }
+                        
                         // Connect to sftp server
                         await sftp.connect(conSettings);
                         node.status({ fill: 'green', shape: 'dot', text: 'connected' });
