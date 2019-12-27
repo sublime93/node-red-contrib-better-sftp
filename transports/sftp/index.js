@@ -8,7 +8,8 @@ module.exports = function (RED) {
     function SFtpNode(n) {
         RED.nodes.createNode(this, n);
         this.valid = true;
-        var keyPath = n.key.trim();
+        var keyPath = "";
+        if (n.key) keyPath = n.key.trim();
 
         if (keyPath.length > 0) {
             try {
@@ -131,7 +132,7 @@ module.exports = function (RED) {
                                 finish([conSettings.password]);
                             })
                         }
-                        
+
                         // Connect to sftp server
                         await sftp.connect(conSettings);
                         node.status({ fill: 'green', shape: 'dot', text: 'connected' });
