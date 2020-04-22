@@ -90,7 +90,7 @@ module.exports = function (RED) {
             node.status({ fill: "blue", shape: "dot", text: 'connecting' });
             try {
                 node.workdir = msg.workdir || node.workdir || "./";
-                node.localFilename = node.localFilename || msg.localFilename || "";
+                node.localFilename = msg.localFilename || node.localFilename || "";
 
                 /* SFTP options */
                 node.sftpConfig.options.host = msg.host || node.sftpConfig.options.host;
