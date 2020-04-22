@@ -89,7 +89,7 @@ module.exports = function (RED) {
             let sftp = new Client();
             node.status({ fill: "blue", shape: "dot", text: 'connecting' });
             try {
-                node.workdir = node.workdir || msg.workdir || "./";
+                node.workdir = msg.workdir || node.workdir || "./";
                 node.localFilename = node.localFilename || msg.localFilename || "";
 
                 /* SFTP options */
